@@ -8,7 +8,7 @@ services:
       - '29100:9100'
     volumes:
       - '/:/host:ro,rslave'
-      - node-exporter_textfile:/var/lib/node_exporter/textfile_collector
+      - ./textfile_collector:/var/lib/node_exporter/textfile_collector:rw
     command:
       - '--path.rootfs=/host'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev)($$|/)'
@@ -24,22 +24,10 @@ services:
     depends_on:
       - node-exporter
     volumes:
-      - node-exporter_textfile:/textfile:rw
-      - '/run/utmp:/run/utmp:ro'
-    entrypoint: |
-      sh -c "
-        apk add --no-cache util-linux &&
-        while true; do
-          OUT=/textfile/who.prom
-          echo '# HELP node_logged_in_user Logged-in users' > $$OUT
-          echo '# TYPE node_logged_in_user gauge' >> $$OUT
-          who -uH | awk 'NR>1 {print $$1}' | sort -u |
-            while read user; do
-              echo \"node_logged_in_user{user=\\\"$$user\\\"} 1\" >> $$OUT
-            done
-          sleep 60
-        done
-      "
+      - ./textfile_collector:/textfile:rw
+      - /run/utmp:/run/utmp:ro
+      - ./scripts/collect-who.sh:/collect-who.sh:ro
+    entrypoint: ["sh", "/collect-who.sh"]
 
   dcgm-exporter:
     image: nvidia/dcgm-exporter:latest
@@ -78,5 +66,4 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
 
 volumes:
-  node-exporter_textfile:
   grafana-data:
