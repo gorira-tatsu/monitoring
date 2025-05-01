@@ -29,18 +29,6 @@ services:
       - ./scripts/collect-who.sh:/collect-who.sh:ro
     entrypoint: ["sh", "/collect-who.sh"]
 
-  dcgm-exporter:
-    image: nvidia/dcgm-exporter:latest
-    container_name: dcgm-exporter
-    restart: unless-stopped
-    device_requests:
-      - driver: nvidia
-        count: -1
-        capabilities: [gpu]
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-    ports:
-      - '29200:9400'
 
   prometheus:
     image: prom/prometheus:latest
@@ -52,7 +40,6 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
       - node-exporter
-      - dcgm-exporter
 
   grafana:
     image: grafana/grafana:latest
