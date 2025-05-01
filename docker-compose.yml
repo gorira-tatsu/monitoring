@@ -44,7 +44,7 @@ services:
       "
 
   dcgm-exporter:
-    image: nvidia/dcgm-exporter:2.3.1-2.8.0-ubi8
+    image: nvidia/dcgm-exporter:latest
     container_name: dcgm-exporter
     restart: unless-stopped
     runtime: nvidia
