@@ -47,7 +47,7 @@ services:
     image: nvidia/dcgm-exporter:latest
     container_name: dcgm-exporter
     restart: unless-stopped
-    runtime: nvidia
+    gpus: all
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     ports:
