@@ -12,7 +12,6 @@ services:
       - '--path.rootfs=/host'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev)($$|/)'
       - '--collector.loadavg'
-      - '--collector.memory'
       - '--collector.filesystem'
       - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
     networks:
