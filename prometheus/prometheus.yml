@@ -7,4 +7,4 @@ scrape_configs:
 
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ['http://172.16.10.210:9100/']
