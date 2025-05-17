@@ -44,6 +44,30 @@ services:
     networks:
       - monitoring
 
+  dcgm-exporter:
+    image: nvidia/dcgm-exporter:latest
+    container_name: dcgm_exporter
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - '9400:9400'
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  whoami-exporter:
+    image: alpine:latest
+    container_name: whoami_exporter
+    environment:
+      - HOST_USER=${USER}  # Set host user from environment variable
+    volumes:
+      - ./textfile_collector:/output
+    command: /bin/sh -c "while true; do echo \"whoami_info{user=\\\"${HOST_USER}\\\"} 1\" > /output/whoami.prom; sleep 15; done"
+    restart: unless-stopped
+    networks:
+      - monitoring
+
 volumes:
   grafana-data:
   prometheus-data:
