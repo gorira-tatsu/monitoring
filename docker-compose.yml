@@ -1,4 +1,23 @@
 services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - '29100:9100'
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+      - ./textfile_collector:/var/lib/node_exporter/textfile_collector:rw
+    command:
+      - '--path.rootfs=/host'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev)($$|/)'
+      - '--collector.loadavg'
+      - '--collector.memory'
+      - '--collector.filesystem'
+      - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
+    networks:
+      - monitoring
+
   prometheus:
     image: prom/prometheus:latest
     ports:
